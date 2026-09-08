@@ -7,12 +7,17 @@ import { categories } from '../data/categories'
 
 function Home() {
   const featured = products.filter((product) => product.featured)
+
   return (
     <div className="page-shell">
       <Header />
       <main>
         <section className="hero">
-          <img className="hero-image" src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2200&q=90" alt="Luxury furniture and interior" />
+          <img
+            className="hero-image"
+            src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2200&q=90"
+            alt="Luxury furniture and interior"
+          />
           <div className="hero-overlay" />
           <div className="container hero-content">
             <p className="eyebrow">Furniture · Home Décor · Handcrafted</p>
@@ -25,26 +30,40 @@ function Home() {
           </div>
         </section>
 
-        <section className="section">
+        <section className="section intro-section">
           <div className="container intro">
-            <div><p className="eyebrow">Zahid Exports</p><h2 className="section-title">Objects with character.<br />Made for spaces.</h2></div>
+            <div>
+              <p className="eyebrow">Zahid Exports</p>
+              <h2 className="section-title">Objects with character.<br />Made for spaces.</h2>
+            </div>
             <p className="section-copy">We bring together timeless forms, thoughtful materials and skilled craftsmanship to create collections that feel distinctive in every setting — from boutique retail to hospitality and interior projects.</p>
           </div>
         </section>
 
-        <section className="section">
+        <section className="section collection-section">
           <div className="container">
-            <div className="collection-head"><div><p className="eyebrow">Featured Collection</p><h2 className="section-title">Selected pieces<br />for considered spaces.</h2></div><Link className="text-link" to="/products">View all products ↗</Link></div>
+            <div className="collection-head">
+              <div>
+                <p className="eyebrow">Featured Collection</p>
+                <h2 className="section-title">Selected pieces<br />for considered spaces.</h2>
+              </div>
+              <Link className="text-link" to="/products">View all products ↗</Link>
+            </div>
             <ProductGrid products={featured.length ? featured : products.slice(0, 4)} />
           </div>
         </section>
 
         <section className="section category-section">
           <div className="container">
-            <p className="eyebrow" style={{ color: 'rgba(255,255,255,.55)' }}>Explore the range</p>
+            <p className="eyebrow category-eyebrow">Explore the range</p>
             <h2 className="section-title">Shop by category.</h2>
             <div className="category-grid">
-              {categories.slice(0, 8).map((category) => <Link className="category-card" key={category.id} to={`/products/category/${category.slug}`}><div className="category-name">{category.name}</div><div className="category-count">{category.productCount} products&nbsp;&nbsp;→</div></Link>)}
+              {categories.slice(0, 8).map((category) => (
+                <Link className="category-card" key={category.id} to={`/products/category/${category.slug}`}>
+                  <div className="category-name">{category.name}</div>
+                  <div className="category-count">{category.productCount} products&nbsp;&nbsp;→</div>
+                </Link>
+              ))}
             </div>
           </div>
         </section>
@@ -62,4 +81,5 @@ function Home() {
     </div>
   )
 }
+
 export default Home
