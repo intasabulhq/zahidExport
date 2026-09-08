@@ -1,31 +1,21 @@
-import { Link } from "react-router-dom"
+import { Link } from 'react-router-dom'
 
 function ProductCard({ product }) {
   const image = product.images?.[0]
-
   return (
     <article className="group">
-      <Link to={`/products/${product.slug}`}>
-        <div className="aspect-[4/5] overflow-hidden bg-stone-200">
-          {image ? (
-            <img src={image} alt={product.name} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-          ) : (
-            <div className="flex h-full items-center justify-center bg-stone-100 p-8 text-center text-xs uppercase tracking-[0.2em] text-stone-400">
-              Product image coming soon
-            </div>
-          )}
+      <Link to={`/products/${product.slug}`} style={{ textDecoration: 'none' }}>
+        <div className="product-image" style={{ aspectRatio: '4 / 5', overflow: 'hidden', background: '#e8e3db' }}>
+          {image ? <img src={image} alt={product.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .7s' }} /> : <div style={{ height: '100%', display: 'grid', placeItems: 'center', padding: 24, color: '#8b847b', fontSize: 10, letterSpacing: '.18em', textTransform: 'uppercase', textAlign: 'center' }}>Product image coming soon</div>}
         </div>
-        <div className="border-b border-stone-300 py-5">
-          <p className="text-xs uppercase tracking-[0.2em] text-stone-500">{product.category}</p>
-          <div className="mt-2 flex items-center justify-between gap-4">
-            <h2 className="text-lg">{product.name}</h2>
-            <span className="text-xl transition-transform duration-300 group-hover:translate-x-2">→</span>
+        <div style={{ padding: '18px 0', borderBottom: '1px solid var(--line)' }}>
+          <p className="eyebrow">{product.category}</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginTop: 8 }}>
+            <h3 style={{ margin: 0, fontSize: 19 }}>{product.name}</h3><span style={{ fontSize: 18 }}>↗</span>
           </div>
-          <p className="mt-2 text-xs text-stone-400">{product.id}</p>
         </div>
       </Link>
     </article>
   )
 }
-
 export default ProductCard
