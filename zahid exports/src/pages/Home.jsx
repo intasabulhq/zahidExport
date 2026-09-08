@@ -23,7 +23,7 @@ function Home() {
           <img className="hero-image" src={heroImage} alt="A refined Zahid Exports interior collection" />
           <div className="hero-overlay" />
           <div className="container hero-content">
-            <p className="eyebrow hero-eyebrow">Moradabad · India · Since 1998</p>
+            <p className="eyebrow hero-eyebrow">Moradabad · India · Established 2016</p>
             <h1 id="hero-title" className="hero-title">Objects made<br />to be remembered.</h1>
             <div className="hero-lower">
               <p className="hero-copy">Premium furniture and décor shaped by skilled hands for retailers, hospitality groups and considered interiors worldwide.</p>
