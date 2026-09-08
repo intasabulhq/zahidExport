@@ -42,6 +42,18 @@
 .text-link { font-size: 10px; text-transform: uppercase; letter-spacing: .17em; text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 6px; white-space: nowrap; transition: opacity .2s; }
 .text-link:hover { opacity: .5; }
 
+.product-slider { width: 100%; overflow: hidden; background: #e8e4dd; }
+.product-swiper { width: 100%; }
+.product-slide { aspect-ratio: 4 / 5; background: #e8e4dd; }
+.product-slide img { width: 100%; height: 100%; object-fit: cover; }
+.product-slider .swiper-button-prev, .product-slider .swiper-button-next { width: 42px; height: 42px; margin-top: -21px; border: 1px solid rgba(255,255,255,.7); background: rgba(36,33,30,.45); backdrop-filter: blur(5px); color: white; }
+.product-slider .swiper-button-prev::after, .product-slider .swiper-button-next::after { font-size: 12px; font-weight: 400; }
+.product-slider .swiper-button-prev { left: 18px; }
+.product-slider .swiper-button-next { right: 18px; }
+.product-slider .swiper-pagination-bullet { width: 5px; height: 5px; background: white; opacity: .5; }
+.product-slider .swiper-pagination-bullet-active { opacity: 1; }
+.product-slider-empty { aspect-ratio: 4 / 5; display: flex; align-items: center; justify-content: center; padding: 24px; background: #e8e4dd; color: #918a82; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; text-align: center; }
+
 .category-section { background: var(--dark); color: white; }
 .category-eyebrow { color: rgba(255,255,255,.55); }
 .category-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(255,255,255,.18); border-left: 1px solid rgba(255,255,255,.18); margin-top: 46px; }
@@ -72,4 +84,7 @@
   .collection-head { align-items: start; flex-direction: column; margin-bottom: 34px; }
   .category-grid { grid-template-columns: 1fr; }
   .category-card { min-height: 125px; }
+  .product-slider .swiper-button-prev, .product-slider .swiper-button-next { width: 36px; height: 36px; margin-top: -18px; }
+  .product-slider .swiper-button-prev { left: 10px; }
+  .product-slider .swiper-button-next { right: 10px; }
 }
