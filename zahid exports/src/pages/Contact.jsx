@@ -66,7 +66,7 @@ function Contact() {
 
   const handleWhatsapp = (event) => {
     if (!event.currentTarget.form.reportValidity()) return
-    const url = `https://wa.me/918433085717?text=${encodeURIComponent(enquiryText())}`
+    const url = "https://wa.me/918433085717?text=" + encodeURIComponent(enquiryText())
     const whatsappWindow = window.open(url, "_blank", "noopener,noreferrer")
     if (whatsappWindow) whatsappWindow.opener = null
     setStatus("WhatsApp has been opened with the enquiry details.")
