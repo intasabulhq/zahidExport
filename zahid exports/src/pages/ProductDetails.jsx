@@ -34,7 +34,7 @@ function ProductDetails() {
   const whatsappUrl = "https://wa.me/918433085717?text=" + whatsappText
 
   return <div className="min-h-screen bg-stone-50 text-stone-900">
-    <Seo title={product.seo.title} description={product.seo.description} canonicalPath={canonicalPath} structuredData={productSchema} />
+    <Seo title={product.seo.title} description={product.seo.description} keywords={product.seo.keywords} canonicalPath={canonicalPath} image={product.images[0]} type="product" structuredData={productSchema} />
     <Header />
     <main className="mx-auto max-w-7xl px-6 pb-24 pt-36 lg:px-10">
       <nav aria-label="Breadcrumb" className="mb-8 text-sm text-stone-500"><Link to="/products">Products</Link> <span aria-hidden="true">/</span> <Link to={`/products/category/${product.categorySlug}`}>{product.category}</Link> <span aria-hidden="true">/</span> <span>{product.id}</span></nav>

@@ -15,7 +15,7 @@ function ProductCard({ product, index = 0 }) {
           <span className="product-code">{product.id.split('-').slice(-1)[0]}</span>
         </div>
         <div className="product-meta">
-          <div><p className="eyebrow">{product.category}</p><h2>{product.name}</h2><small>{product.id}</small></div>
+          <div><p className="eyebrow">{product.category}</p><h3>{product.name}</h3><small>{product.id}</small></div>
           <span className="product-arrow" aria-hidden="true">↗</span>
         </div>
       </Link>

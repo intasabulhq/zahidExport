@@ -22,7 +22,7 @@ function CategoryPage() {
   }
 
   return <div className="min-h-screen bg-stone-50 text-stone-900">
-    <Seo title={`${category.name} Manufacturer & Exporter India | Zahid Exports`} description={category.description} canonicalPath={`/products/category/${category.slug}`} structuredData={schema} />
+    <Seo title={`${category.name} Manufacturer & Exporter India | Zahid Exports`} description={category.description} keywords={category.keywords} canonicalPath={`/products/category/${category.slug}`} image={categoryProducts[0]?.images?.[0]} structuredData={schema} />
     <Header />
     <main className="mx-auto max-w-7xl px-6 pb-24 pt-36 lg:px-10">
       <p className="mb-4 text-xs uppercase tracking-[0.3em] text-stone-500">Wholesale Collection</p>

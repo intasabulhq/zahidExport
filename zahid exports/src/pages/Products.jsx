@@ -17,6 +17,7 @@ function Products() {
     <Seo
       title="Home Decor Products Manufacturer & Exporter | Zahid Exports"
       description="Explore handcrafted metal furniture, cake stands, animal stands, trays and decorative home accessories manufactured in Moradabad, India."
+      keywords={["home decor manufacturer India", "Moradabad handicraft exporter", "wholesale metal decor", "hospitality decor supplier"]}
       canonicalPath="/products"
     />
     <Header />
