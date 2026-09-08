@@ -1,18 +1,22 @@
 import { Link } from 'react-router-dom'
 
-function ProductCard({ product }) {
+function ProductCard({ product, index = 0 }) {
   const image = product.images?.[0]
   return (
-    <article className="group">
-      <Link to={`/products/${product.slug}`} style={{ textDecoration: 'none' }}>
-        <div className="product-image" style={{ aspectRatio: '4 / 5', overflow: 'hidden', background: '#e8e3db' }}>
-          {image ? <img src={image} alt={product.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .7s' }} /> : <div style={{ height: '100%', display: 'grid', placeItems: 'center', padding: 24, color: '#8b847b', fontSize: 10, letterSpacing: '.18em', textTransform: 'uppercase', textAlign: 'center' }}>Product image coming soon</div>}
+    <article className={`product-card product-card-${(index % 3) + 1}`}>
+      <Link to={`/products/${product.slug}`}>
+        <div className="product-image">
+          {image ? <img src={image} alt={product.name} loading="lazy" /> : (
+            <div className="product-placeholder" aria-label={`${product.name} image coming soon`}>
+              <span className="placeholder-shape" aria-hidden="true" />
+              <small>Image coming soon</small>
+            </div>
+          )}
+          <span className="product-code">{product.id.split('-').slice(-1)[0]}</span>
         </div>
-        <div style={{ padding: '18px 0', borderBottom: '1px solid var(--line)' }}>
-          <p className="eyebrow">{product.category}</p>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginTop: 8 }}>
-            <h3 style={{ margin: 0, fontSize: 19 }}>{product.name}</h3><span style={{ fontSize: 18 }}>↗</span>
-          </div>
+        <div className="product-meta">
+          <div><p className="eyebrow">{product.category}</p><h3>{product.name}</h3></div>
+          <span className="product-arrow" aria-hidden="true">↗</span>
         </div>
       </Link>
     </article>

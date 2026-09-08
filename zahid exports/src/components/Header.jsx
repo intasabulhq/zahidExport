@@ -1,25 +1,47 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 
-const links = [['Collections', '/products'], ['About', '/about'], ['Contact', '/contact']]
+const links = [['Collection', '/products'], ['About', '/about'], ['Contact', '/contact']]
 
 function Header() {
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const location = useLocation()
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => setOpen(false), [location.pathname])
+
   return (
-    <header className="site-header">
-      <nav className="container header-inner">
-        <Link to="/" className="brand" onClick={() => setOpen(false)}>
+    <header className={`site-header ${scrolled ? 'is-scrolled' : ''} ${open ? 'menu-open' : ''}`}>
+      <nav className="container header-inner" aria-label="Primary navigation">
+        <Link to="/" className="brand" aria-label="Zahid Exports home">
           <span>ZAHID</span><small>EXPORTS</small>
         </Link>
         <div className="desktop-nav">
           {links.map(([label, href]) => <Link key={href} to={href}>{label}</Link>)}
         </div>
         <div className="header-actions">
-          <Link className="quote-link" to="/contact">Request a Quote <span>↗</span></Link>
-          <button className="menu-button" onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Toggle menu">{open ? 'Close' : 'Menu'}</button>
+          <Link className="quote-link" to="/contact">Request a quote <span aria-hidden="true">↗</span></Link>
+          <button className="menu-button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="mobile-menu">
+            <span>{open ? 'Close' : 'Menu'}</span><i aria-hidden="true" />
+          </button>
         </div>
       </nav>
-      {open && <div className="mobile-nav"><div className="container">{links.map(([label, href]) => <Link key={href} to={href} onClick={() => setOpen(false)}>{label}</Link>)}<Link to="/contact" onClick={() => setOpen(false)}>Request a Quote ↗</Link></div></div>}
+      <div id="mobile-menu" className="mobile-nav" aria-hidden={!open}>
+        <div className="container mobile-nav-inner">
+          <p className="eyebrow">Navigate</p>
+          {links.map(([label, href], index) => (
+            <Link key={href} to={href}><span>0{index + 1}</span>{label}<b aria-hidden="true">↗</b></Link>
+          ))}
+          <Link className="mobile-quote" to="/contact">Start an enquiry</Link>
+        </div>
+      </div>
     </header>
   )
 }
