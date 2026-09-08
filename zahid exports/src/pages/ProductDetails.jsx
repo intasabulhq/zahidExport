@@ -31,6 +31,7 @@ function ProductDetails() {
   }
 
   const whatsappText = encodeURIComponent(`Hello Zahid Exports, I would like a quote for ${product.name} (${product.id}).`)
+  const whatsappUrl = "https://wa.me/918433085717?text=" + whatsappText
 
   return <div className="min-h-screen bg-stone-50 text-stone-900">
     <Seo title={product.seo.title} description={product.seo.description} canonicalPath={canonicalPath} structuredData={productSchema} />
@@ -51,7 +52,7 @@ function ProductDetails() {
             <div><dt className="text-stone-400">MOQ</dt><dd className="mt-1">{product.moq || "On enquiry"}</dd></div>
           </dl>
           <div className="mt-8"><h2 className="text-sm uppercase tracking-widest text-stone-500">Applications</h2><p className="mt-3 leading-7 text-stone-600">{product.applications.join(" · ")}</p></div>
-          <div className="mt-10 flex flex-wrap gap-4"><Link to="/contact" className="inline-block border border-stone-900 px-9 py-4 text-sm uppercase tracking-widest transition hover:bg-stone-900 hover:text-white">Request a Quote</Link><a href={`https://wa.me/918433085717?text=${whatsappText}`} target="_blank" rel="noreferrer" className="inline-block bg-stone-900 px-9 py-4 text-sm uppercase tracking-widest text-white transition hover:bg-stone-700">WhatsApp Enquiry</a></div>
+          <div className="mt-10 flex flex-wrap gap-4"><Link to="/contact" className="inline-block border border-stone-900 px-9 py-4 text-sm uppercase tracking-widest transition hover:bg-stone-900 hover:text-white">Request a Quote</Link><a href={whatsappUrl} target="_blank" rel="noreferrer" className="inline-block bg-stone-900 px-9 py-4 text-sm uppercase tracking-widest text-white transition hover:bg-stone-700">WhatsApp Enquiry</a></div>
         </div>
       </div>
     </main>
