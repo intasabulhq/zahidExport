@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./pages/home-theme.css";
+@import "./pages/home-polish.css";
 
 :root {
   font-family: 'Poppins', Arial, Helvetica, sans-serif;
