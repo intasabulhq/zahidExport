@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { useAdminAuth } from '../../admin/AdminAuthContext'
+import { useAdminAuth } from '../../admin/adminAuth'
 import './admin.css'
 
 function AdminLogin() {

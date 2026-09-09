@@ -1,17 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 
+const supportsIntersectionObserver = typeof window !== 'undefined' && 'IntersectionObserver' in window
+
 function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }) {
   const ref = useRef(null)
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(!supportsIntersectionObserver)
 
   useEffect(() => {
     const element = ref.current
-    if (!element) return
-
-    if (!('IntersectionObserver' in window)) {
-      setVisible(true)
-      return
-    }
+    if (!element || !supportsIntersectionObserver) return
 
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
