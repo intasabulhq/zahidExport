@@ -1,0 +1,152 @@
+/* Approved B2B system: dark Henge atmosphere, Apparatus-style product
+   treatment and Azoonis-inspired motion/typography. Selectors intentionally
+   include .motion-home so this layer wins regardless of Vite CSS order. */
+.motion-home {
+  --az-cream: #eee8dd;
+  --az-yellow: #a4865e;
+  --az-green: #151614;
+  --az-ink: #151614;
+  --az-charcoal: #20211e;
+  --az-espresso: #2c241f;
+  --az-bronze: #a4865e;
+  --az-muted: #aaa398;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+  color: var(--az-ink);
+  background: var(--az-cream);
+}
+.motion-home h1,
+.motion-home h2,
+.motion-home h3,
+.motion-home .az-word-accent,
+.motion-home .az-floating-card > span,
+.motion-home .az-marquee span,
+.motion-home .az-roundel span,
+.motion-home .az-stage h3,
+.motion-home .az-category-image > span,
+.motion-home .az-final-cta h2 i { font-family: 'Poppins', Arial, Helvetica, sans-serif; }
+.motion-home h1,.motion-home h2 { font-weight:600; letter-spacing:-.055em; }
+.motion-home h3 { font-weight:500; }
+.motion-home .az-word-accent,
+.motion-home .az-word-accent i,
+.motion-home .az-final-cta h2 i { font-style:normal; }
+.motion-home .az-word-accent { color:var(--az-bronze); }
+.motion-home .az-kicker,
+.motion-home .az-button,
+.motion-home .az-text-link,
+.motion-home .az-arrow-link { font-weight:500; }
+
+.motion-home .site-header:not(.is-scrolled) { color:var(--az-cream); }
+.motion-home .site-header.is-scrolled { color:var(--az-ink); background:rgba(238,232,221,.94); border-bottom:1px solid rgba(21,22,20,.12); }
+.motion-home .site-header:not(.is-scrolled) .quote-link:hover { color:var(--az-cream); background:var(--az-bronze); border-color:var(--az-bronze); }
+
+.motion-home .az-hero {
+  color:var(--az-cream);
+  background:radial-gradient(circle at 78% 18%,rgba(164,134,94,.19),transparent 29%),radial-gradient(circle at 12% 94%,rgba(92,62,45,.42),transparent 36%),linear-gradient(135deg,#111210 0%,#191a17 54%,#2c241f 100%);
+}
+.motion-home .az-hero::after { content:''; position:absolute; inset:auto 0 -1px; height:clamp(20px,4vw,56px); z-index:4; background:var(--az-cream); clip-path:ellipse(60% 24% at 50% 100%); pointer-events:none; }
+.motion-home .az-hero-noise { opacity:.32; background:radial-gradient(circle at 70% 22%,rgba(164,134,94,.18),transparent 31%),linear-gradient(135deg,transparent 0 48%,rgba(238,232,221,.025) 48% 49%,transparent 49% 100%); background-size:auto,30px 30px; }
+.motion-home .az-hero-copy .az-kicker { color:rgba(238,232,221,.58); }
+.motion-home .az-hero h1 { line-height:.88; text-wrap:balance; }
+.motion-home .az-hero-bottom { border-color:rgba(238,232,221,.24); }
+.motion-home .az-hero-bottom p { color:rgba(238,232,221,.68); }
+.motion-home .az-button-light { color:var(--az-ink); background:var(--az-cream); border-color:var(--az-cream); }
+.motion-home .az-button-light:hover { color:var(--az-cream); background:var(--az-bronze); border-color:var(--az-bronze); }
+.motion-home .az-floating-card { opacity:0; box-shadow:0 34px 80px rgba(0,0,0,.42); border:1px solid rgba(238,232,221,.12); animation:azCardEnter 1.05s cubic-bezier(.16,1,.3,1) forwards,azFloat 8s 1.2s ease-in-out infinite; }
+.motion-home .az-floating-card-1 { animation-delay:.25s,1.35s; }
+.motion-home .az-floating-card-2 { animation-delay:.42s,1.52s; }
+.motion-home .az-floating-card-3 { animation-delay:.58s,1.68s; }
+.motion-home .az-floating-card > span { color:var(--az-cream); background:rgba(21,22,20,.78); font-size:13px; font-weight:500; }
+.motion-home .az-floating-card small { font-family:'Poppins',Arial,sans-serif; }
+.motion-home .az-orbit { border-color:rgba(238,232,221,.25); animation-duration:26s; }
+.motion-home .az-orbit span { color:var(--az-bronze); }
+.motion-home .az-scroll { color:rgba(238,232,221,.55); }
+@keyframes azCardEnter { from { opacity:0; translate:70px 18px; filter:blur(8px); } to { opacity:1; translate:0 0; filter:blur(0); } }
+
+.motion-home .az-marquee { color:var(--az-cream); background:var(--az-bronze); }
+.motion-home .az-marquee > div { animation-duration:32s; }
+.motion-home .az-marquee span { font-size:20px; font-weight:500; letter-spacing:-.02em; }
+
+.motion-home .motion-reveal { opacity:0; transform:translate3d(0,64px,0) scale(.985); filter:blur(7px); clip-path:inset(0 0 10% 0); transition:opacity .9s cubic-bezier(.16,1,.3,1) var(--reveal-delay),transform 1.05s cubic-bezier(.16,1,.3,1) var(--reveal-delay),filter .85s ease var(--reveal-delay),clip-path 1s cubic-bezier(.16,1,.3,1) var(--reveal-delay); will-change:opacity,transform,filter; }
+.motion-home .motion-reveal.is-visible { opacity:1; transform:translate3d(0,0,0) scale(1); filter:blur(0); clip-path:inset(0); }
+.motion-home .az-stage.motion-reveal { transform:translate3d(-54px,0,0); clip-path:inset(0 100% 0 0); }
+.motion-home .az-stage.motion-reveal.is-visible { transform:translate3d(0,0,0); clip-path:inset(0); }
+.motion-home .az-service-card.motion-reveal:nth-child(even) { transform:translate3d(0,84px,0); }
+.motion-home .az-service-card.motion-reveal.is-visible { transform:translate3d(0,0,0); }
+.motion-home .az-category-card.motion-reveal { transform:translate3d(56px,0,0); }
+.motion-home .az-category-card.motion-reveal.is-visible { transform:translate3d(0,0,0); }
+
+.motion-home .az-story { background:var(--az-cream); }
+.motion-home .az-story h2,
+.motion-home .az-process h2,
+.motion-home .az-services h2,
+.motion-home .az-category-head h2,
+.motion-home .az-featured h2,
+.motion-home .az-proof h2,
+.motion-home .az-final-cta h2 { line-height:.98; }
+.motion-home .az-story-copy { border-color:rgba(21,22,20,.18); }
+.motion-home .az-story-copy p,
+.motion-home .az-category-head > div:last-child p { color:#6f6960; }
+.motion-home .az-roundel { border-color:rgba(21,22,20,.28); }
+.motion-home .az-roundel span { font-size:32px; font-weight:600; }
+
+.motion-home .az-process { color:var(--az-cream); background:var(--az-espresso); }
+.motion-home .az-process .az-kicker { color:var(--az-bronze); }
+.motion-home .az-stage-stack,
+.motion-home .az-stage { border-color:rgba(238,232,221,.18); }
+.motion-home .az-stage:hover { background:rgba(164,134,94,.12); }
+.motion-home .az-stage-number { color:var(--az-bronze); }
+.motion-home .az-stage h3 { letter-spacing:-.04em; }
+.motion-home .az-stage > p { color:rgba(238,232,221,.62); }
+.motion-home .az-stage li { color:rgba(238,232,221,.68); border-color:rgba(238,232,221,.13); }
+
+.motion-home .az-services { color:var(--az-cream); background:var(--az-charcoal); }
+.motion-home .az-services .az-kicker,
+.motion-home .az-proof .az-kicker { color:var(--az-bronze); }
+.motion-home .az-service-grid,
+.motion-home .az-service-card { border-color:rgba(238,232,221,.18); }
+.motion-home .az-service-card p { color:rgba(238,232,221,.55); }
+.motion-home .az-service-icon { border-color:rgba(238,232,221,.32); }
+.motion-home .az-service-card:hover .az-service-icon { color:var(--az-cream); background:var(--az-bronze); }
+
+.motion-home .az-categories { background:#f3eee5; }
+.motion-home .az-category-image { background:#d8cec0; }
+.motion-home .az-category-card a > div:last-child { border-color:rgba(21,22,20,.18); }
+.motion-home .az-category-image b { color:var(--az-cream); background:rgba(44,36,31,.9); }
+
+.motion-home .az-featured { color:var(--az-cream); background:var(--az-espresso); }
+.motion-home .az-featured .az-kicker { color:var(--az-bronze); }
+.motion-home .az-featured-card a > div { background:#463a31; }
+.motion-home .az-featured-card p,
+.motion-home .az-featured-card > a > span { color:rgba(238,232,221,.54); }
+
+.motion-home .az-proof { color:var(--az-cream); background:var(--az-green); }
+.motion-home .az-proof-list,
+.motion-home .az-proof-list > div { border-color:rgba(238,232,221,.18); }
+.motion-home .az-proof-list span { color:var(--az-bronze); }
+.motion-home .az-proof-list > div { transition:padding .3s ease,background .3s ease; }
+.motion-home .az-proof-list > div:hover { padding-inline:12px; background:rgba(164,134,94,.08); }
+
+.motion-home .az-final-cta { color:var(--az-ink); background:radial-gradient(circle at 14% 25%,rgba(164,134,94,.18),transparent 26%),var(--az-cream); }
+.motion-home .az-final-cta .az-kicker { color:#6d6256; }
+.motion-home .az-button-dark { color:var(--az-cream); background:var(--az-ink); border-color:var(--az-ink); }
+.motion-home .az-button-dark:hover { color:var(--az-cream); background:var(--az-bronze); border-color:var(--az-bronze); }
+
+@supports (animation-timeline:view()) {
+  .motion-home .az-category-image img,
+  .motion-home .az-featured-card img { animation:azImageDrift linear both; animation-timeline:view(); animation-range:entry 0% exit 100%; }
+  @keyframes azImageDrift { from { transform:scale(1.08) translateY(-2%); } to { transform:scale(1.08) translateY(2%); } }
+}
+
+@media(max-width:680px) {
+  .motion-home .az-hero::after { height:28px; }
+  .motion-home .az-marquee span { font-size:17px; }
+  .motion-home .motion-reveal { transform:translate3d(0,42px,0); filter:blur(4px); }
+  .motion-home .motion-reveal.is-visible { transform:translate3d(0,0,0); filter:blur(0); }
+}
+@media(prefers-reduced-motion:reduce) {
+  .motion-home .az-hero::after { clip-path:none; height:2px; }
+  .motion-home .motion-reveal,
+  .motion-home .az-stage.motion-reveal,
+  .motion-home .az-category-card.motion-reveal { opacity:1; transform:none; filter:none; clip-path:none; transition:none; }
+  .motion-home .az-floating-card { opacity:1; animation:none; }
+}
