@@ -1,0 +1,107 @@
+/* Six-scene cinematic hero. Images live in public/hero as hero-1.webp ... hero-6.webp. */
+.home-v2 .ze2-hero {
+  overflow: hidden;
+  background: #11120f !important;
+}
+.home-v2 .ze2-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  opacity: 1;
+  background-color: #11120f;
+  background-image: url('/hero/hero-1.webp');
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.01);
+  animation: zeHeroScenes 36s infinite cubic-bezier(.45, 0, .2, 1);
+  will-change: opacity, transform;
+}
+.home-v2 .ze2-hero-glow {
+  inset: 0;
+  z-index: -1;
+  opacity: 1;
+  background:
+    linear-gradient(90deg, rgba(13, 13, 11, .92) 0%, rgba(18, 17, 14, .77) 31%, rgba(18, 17, 14, .34) 58%, rgba(18, 17, 14, .48) 100%),
+    linear-gradient(0deg, rgba(12, 12, 10, .64) 0%, transparent 48%, rgba(12, 12, 10, .3) 100%);
+}
+.home-v2 .ze2-hero::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 4;
+  height: 2px;
+  background: rgba(164, 134, 94, .8);
+  clip-path: none;
+  pointer-events: none;
+}
+.home-v2 .ze2-hero-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+.home-v2 .ze2-hero-copy {
+  width: min(760px, 67vw);
+}
+.home-v2 .ze2-hero-gallery {
+  display: none;
+}
+.home-v2 .ze2-hero h1 {
+  max-width: 760px;
+  text-shadow: 0 8px 34px rgba(0, 0, 0, .44);
+}
+.home-v2 .ze2-hero-detail {
+  max-width: 720px;
+  background: linear-gradient(90deg, rgba(16, 16, 13, .16), transparent);
+}
+.home-v2 .ze2-hero-detail > p {
+  color: rgba(247, 242, 233, .8);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, .55);
+}
+.home-v2 .ze2-marquee {
+  position: relative;
+  z-index: 6;
+}
+
+@keyframes zeHeroScenes {
+  0% { background-image: url('/hero/hero-1.webp'); opacity: 0; transform: scale(1.01) translate3d(0, 0, 0); }
+  2.5%, 14% { background-image: url('/hero/hero-1.webp'); opacity: 1; transform: scale(1.065) translate3d(-.5%, 0, 0); }
+  16% { background-image: url('/hero/hero-1.webp'); opacity: 0; transform: scale(1.08) translate3d(-.8%, 0, 0); }
+  16.1% { background-image: url('/hero/hero-2.webp'); opacity: 0; transform: scale(1.01) translate3d(.5%, 0, 0); }
+  18.5%, 30.5% { background-image: url('/hero/hero-2.webp'); opacity: 1; transform: scale(1.065) translate3d(0, 0, 0); }
+  32.5% { background-image: url('/hero/hero-2.webp'); opacity: 0; transform: scale(1.08) translate3d(-.5%, 0, 0); }
+  32.6% { background-image: url('/hero/hero-3.webp'); opacity: 0; transform: scale(1.01); }
+  35%, 47% { background-image: url('/hero/hero-3.webp'); opacity: 1; transform: scale(1.06) translate3d(.6%, 0, 0); }
+  49% { background-image: url('/hero/hero-3.webp'); opacity: 0; transform: scale(1.08) translate3d(1%, 0, 0); }
+  49.1% { background-image: url('/hero/hero-4.webp'); opacity: 0; transform: scale(1.01) translate3d(-.5%, 0, 0); }
+  51.5%, 63.5% { background-image: url('/hero/hero-4.webp'); opacity: 1; transform: scale(1.065) translate3d(0, 0, 0); }
+  65.5% { background-image: url('/hero/hero-4.webp'); opacity: 0; transform: scale(1.08) translate3d(.5%, 0, 0); }
+  65.6% { background-image: url('/hero/hero-5.webp'); opacity: 0; transform: scale(1.01); }
+  68%, 80% { background-image: url('/hero/hero-5.webp'); opacity: 1; transform: scale(1.065) translate3d(-.5%, 0, 0); }
+  82% { background-image: url('/hero/hero-5.webp'); opacity: 0; transform: scale(1.08) translate3d(-.8%, 0, 0); }
+  82.1% { background-image: url('/hero/hero-6.webp'); opacity: 0; transform: scale(1.01) translate3d(.5%, 0, 0); }
+  84.5%, 97% { background-image: url('/hero/hero-6.webp'); opacity: 1; transform: scale(1.065) translate3d(0, 0, 0); }
+  100% { background-image: url('/hero/hero-6.webp'); opacity: 0; transform: scale(1.08) translate3d(-.5%, 0, 0); }
+}
+
+@media (max-width: 900px) {
+  .home-v2 .ze2-hero-copy { width: min(780px, 88vw); }
+  .home-v2 .ze2-hero-glow {
+    background:
+      linear-gradient(90deg, rgba(13, 13, 11, .91) 0%, rgba(18, 17, 14, .68) 62%, rgba(18, 17, 14, .45) 100%),
+      linear-gradient(0deg, rgba(12, 12, 10, .62), transparent 55%);
+  }
+}
+@media (max-width: 680px) {
+  .home-v2 .ze2-hero::before { background-position: 62% center; }
+  .home-v2 .ze2-hero-copy { width: 100%; }
+  .home-v2 .ze2-hero-glow {
+    background: linear-gradient(90deg, rgba(13, 13, 11, .9), rgba(18, 17, 14, .55)), linear-gradient(0deg, rgba(12, 12, 10, .62), transparent 60%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-v2 .ze2-hero::before {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    background-image: url('/hero/hero-1.webp');
+  }
+}
