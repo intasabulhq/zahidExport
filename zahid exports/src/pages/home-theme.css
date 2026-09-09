@@ -1,0 +1,163 @@
+/* Approved B2B visual system: Henge atmosphere, Apparatus product treatment,
+   and Azoonis-inspired Poppins typography. Loaded after home-motion.css. */
+.motion-home {
+  --az-cream: #eee8dd;
+  --az-yellow: #a4865e;
+  --az-green: #151614;
+  --az-ink: #151614;
+  --az-charcoal: #20211e;
+  --az-espresso: #2c241f;
+  --az-bronze: #a4865e;
+  --az-muted: #aaa398;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+  background: var(--az-cream);
+}
+
+.motion-home h1,
+.motion-home h2,
+.motion-home h3,
+.motion-home .az-word-accent,
+.motion-home .az-floating-card > span,
+.motion-home .az-marquee span,
+.motion-home .az-roundel span,
+.motion-home .az-stage h3,
+.motion-home .az-category-image > span,
+.motion-home .az-final-cta h2 i {
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+}
+
+.motion-home h1,
+.motion-home h2 {
+  font-weight: 600;
+  letter-spacing: -.055em;
+}
+
+.motion-home h3 { font-weight: 500; }
+.motion-home .az-word-accent,
+.motion-home .az-word-accent i,
+.motion-home .az-final-cta h2 i { font-style: normal; }
+.motion-home .az-word-accent { color: var(--az-bronze); }
+.motion-home .az-kicker,
+.motion-home .az-button,
+.motion-home .az-text-link,
+.motion-home .az-arrow-link { font-weight: 500; }
+
+.motion-home .site-header:not(.is-scrolled) { color: var(--az-cream); }
+.motion-home .site-header.is-scrolled {
+  color: var(--az-ink);
+  background: rgba(238, 232, 221, .92);
+  border-bottom: 1px solid rgba(21, 22, 20, .12);
+}
+
+.az-hero {
+  color: var(--az-cream);
+  background:
+    radial-gradient(circle at 79% 21%, rgba(164, 134, 94, .25), transparent 0 28%),
+    radial-gradient(circle at 16% 92%, rgba(74, 51, 38, .65), transparent 0 34%),
+    linear-gradient(135deg, #151614 0%, #20211e 52%, #2c241f 100%);
+}
+.az-hero::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -1px;
+  height: clamp(24px, 4.5vw, 68px);
+  z-index: 4;
+  background: var(--az-bronze);
+  clip-path: ellipse(58% 23% at 50% 100%);
+  pointer-events: none;
+}
+.az-hero-noise {
+  opacity: .42;
+  background:
+    radial-gradient(circle at 70% 22%, rgba(164, 134, 94, .2), transparent 31%),
+    linear-gradient(135deg, transparent 0 48%, rgba(238, 232, 221, .025) 48% 49%, transparent 49% 100%);
+  background-size: auto, 30px 30px;
+}
+.az-hero-copy .az-kicker { color: rgba(238, 232, 221, .58); }
+.az-hero h1 { line-height: .88; text-wrap: balance; }
+.az-hero-bottom { border-color: rgba(238, 232, 221, .24); }
+.az-hero-bottom p { color: rgba(238, 232, 221, .68); }
+.az-button-light { color: var(--az-ink); background: var(--az-cream); border-color: var(--az-cream); }
+.az-button-light:hover { color: var(--az-cream); background: var(--az-bronze); border-color: var(--az-bronze); }
+.az-floating-card { box-shadow: 0 34px 80px rgba(0, 0, 0, .38); border: 1px solid rgba(238, 232, 221, .12); }
+.az-floating-card > span { background: rgba(21, 22, 20, .74); color: var(--az-cream); font-size: 13px; font-weight: 500; }
+.az-floating-card small { font-family: 'Poppins', Arial, sans-serif; }
+.az-orbit { border-color: rgba(238, 232, 221, .28); }
+.az-orbit span { color: var(--az-bronze); }
+.az-scroll { color: rgba(238, 232, 221, .55); }
+
+.az-marquee { color: var(--az-cream); background: var(--az-bronze); }
+.az-marquee span { font-size: 21px; font-weight: 500; letter-spacing: -.02em; }
+
+.az-story { background: var(--az-cream); }
+.az-story h2,
+.az-process h2,
+.az-services h2,
+.az-category-head h2,
+.az-featured h2,
+.az-proof h2,
+.az-final-cta h2 { line-height: .98; }
+.az-story-copy { border-color: rgba(21, 22, 20, .18); }
+.az-story-copy p,
+.az-category-head > div:last-child p { color: #6f6960; }
+.az-roundel { border-color: rgba(21, 22, 20, .28); }
+.az-roundel span { font-size: 32px; font-weight: 600; }
+
+.az-process { color: var(--az-cream); background: var(--az-espresso); }
+.az-process .az-kicker { color: var(--az-bronze); }
+.az-stage-stack,
+.az-stage { border-color: rgba(238, 232, 221, .18); }
+.az-stage:hover { background: rgba(164, 134, 94, .12); }
+.az-stage-number { color: var(--az-bronze); }
+.az-stage h3 { letter-spacing: -.04em; }
+.az-stage > p { color: rgba(238, 232, 221, .62); }
+.az-stage li { color: rgba(238, 232, 221, .68); border-color: rgba(238, 232, 221, .13); }
+
+.az-services { color: var(--az-cream); background: var(--az-charcoal); }
+.az-services .az-kicker,
+.az-proof .az-kicker { color: var(--az-bronze); }
+.az-service-grid,
+.az-service-card { border-color: rgba(238, 232, 221, .18); }
+.az-service-card p { color: rgba(238, 232, 221, .55); }
+.az-service-icon { border-color: rgba(238, 232, 221, .32); }
+.az-service-card:hover .az-service-icon { color: var(--az-cream); background: var(--az-bronze); }
+
+.az-categories { background: #f3eee5; }
+.az-category-image { background: #d8cec0; }
+.az-category-card a > div:last-child { border-color: rgba(21, 22, 20, .18); }
+.az-category-image b { color: var(--az-cream); background: rgba(44, 36, 31, .88); }
+
+.az-featured { color: var(--az-cream); background: var(--az-espresso); }
+.az-featured .az-kicker { color: var(--az-bronze); }
+.az-featured-card a > div { background: #463a31; }
+.az-featured-card p,
+.az-featured-card > a > span { color: rgba(238, 232, 221, .54); }
+
+.az-proof { color: var(--az-cream); background: var(--az-green); }
+.az-proof-list,
+.az-proof-list > div { border-color: rgba(238, 232, 221, .18); }
+.az-proof-list span { color: var(--az-bronze); }
+.az-proof-list > div { transition: padding .3s ease, background .3s ease; }
+.az-proof-list > div:hover { padding-inline: 12px; background: rgba(164, 134, 94, .08); }
+
+.az-final-cta {
+  color: var(--az-ink);
+  background:
+    radial-gradient(circle at 14% 25%, rgba(164, 134, 94, .2), transparent 26%),
+    var(--az-cream);
+}
+.az-final-cta .az-kicker { color: #6d6256; }
+.az-button-dark { color: var(--az-cream); background: var(--az-ink); border-color: var(--az-ink); }
+.az-button-dark:hover { color: var(--az-cream); background: var(--az-bronze); border-color: var(--az-bronze); }
+
+.motion-home + .site-footer,
+.motion-home .site-footer { background: #111210; }
+
+@media (max-width: 680px) {
+  .az-hero::after { height: 30px; }
+  .az-marquee span { font-size: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .az-hero::after { clip-path: none; height: 2px; }
+}
