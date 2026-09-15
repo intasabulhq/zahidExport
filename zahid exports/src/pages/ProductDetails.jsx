@@ -14,8 +14,6 @@ function ProductDetails() {
 
   useEffect(() => {
     const controller = new AbortController()
-    setLoading(true)
-    setError('')
     fetchProduct(productSlug, controller.signal)
       .then(setProduct)
       .catch((requestError) => requestError.name !== 'AbortError' && setError(requestError.message))

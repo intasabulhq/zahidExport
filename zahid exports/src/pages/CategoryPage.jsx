@@ -17,7 +17,6 @@ function CategoryPage() {
   useEffect(() => {
     if (!category) return
     const controller = new AbortController()
-    setLoading(true)
     fetchProducts({ category: categorySlug, signal: controller.signal })
       .then(setProducts)
       .catch((requestError) => requestError.name !== 'AbortError' && setError(requestError.message))
