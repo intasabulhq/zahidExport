@@ -44,3 +44,31 @@ h1, h2, h3 { font-family: 'Poppins', Arial, Helvetica, sans-serif; font-weight: 
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+
+/* Fix product enquiry button text */
+main a[href^="/contact?sku="] {
+  color: #1c1917;
+}
+
+main a[href^="/contact?sku="]:hover {
+  color: #ffffff;
+}
+
+main a[href^="https://wa.me/"] {
+  color: #ffffff;
+}
+
+main a[href^="https://wa.me/"]:hover {
+  color: #ffffff;
+}
+
+/* Solid header on product detail pages */
+.product-details-page .site-header {
+  position: fixed;
+  color: #25231f;
+  background: rgba(244, 241, 235, 0.97);
+  box-shadow: 0 1px 0 rgba(37, 35, 31, 0.16);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
