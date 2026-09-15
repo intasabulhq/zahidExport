@@ -38,7 +38,7 @@ function ProductDetails() {
   }
 
   const whatsappText = encodeURIComponent(`Hello Zahid Exports, I would like a quote for ${product.name} (${product.id}).`)
-  const whatsappUrl = `https://wa.me/918433085717?text=${whatsappText}`
+  const whatsappUrl = 'https://wa.me/918433085717?text=' + whatsappText
   const contactUrl = `/contact?sku=${encodeURIComponent(product.id)}&product=${encodeURIComponent(product.name)}`
 
   return <div className="min-h-screen bg-stone-50 text-stone-900">
