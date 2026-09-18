@@ -1,10 +1,20 @@
 import { Router } from 'express'
 import { z } from 'zod'
+import { cloudinary } from '../config/cloudinary.js'
 import { pool, query } from '../config/db.js'
 import { requireAuth } from '../middleware/auth.js'
 
 const router = Router()
 const statusValues = ['draft', 'published', 'archived']
+const productFolderPrefix = 'zahid-exports/products/'
+
+const productImageSchema = z.object({
+  url: z.string().url().max(2000),
+  publicId: z.string().trim().startsWith(productFolderPrefix).max(500).nullable().optional().default(null),
+  altText: z.string().trim().max(240).default(''),
+  position: z.number().int().min(0).max(11).optional(),
+})
+
 const productSchema = z.object({
   name: z.string().trim().min(2).max(180),
   sku: z.string().trim().min(2).max(100),
@@ -16,7 +26,7 @@ const productSchema = z.object({
   dimensions: z.string().trim().max(200).default(''),
   moq: z.string().trim().max(100).default(''),
   applications: z.array(z.string().trim().min(1).max(100)).default([]),
-  images: z.array(z.string().url().max(2000)).max(12).default([]),
+  images: z.array(z.union([z.string().url().max(2000), productImageSchema])).max(12).default([]),
   imageAlt: z.string().trim().max(240).default(''),
   seoTitle: z.string().trim().max(70),
   seoDescription: z.string().trim().max(170),
@@ -30,18 +40,53 @@ const productColumns = `
   p.dimensions, p.moq, p.applications, p.image_alt, p.seo_title, p.seo_description,
   p.seo_keywords, p.featured, p.status, p.created_at, p.updated_at,
   c.name AS category, c.slug AS category_slug,
-  COALESCE((SELECT json_agg(pi.url ORDER BY pi.position) FROM product_images pi WHERE pi.product_id = p.id), '[]') AS images
+  COALESCE((
+    SELECT json_agg(json_build_object(
+      'url', pi.url,
+      'publicId', pi.public_id,
+      'altText', pi.alt_text,
+      'position', pi.position
+    ) ORDER BY pi.position)
+    FROM product_images pi
+    WHERE pi.product_id = p.id
+  ), '[]'::json) AS images
 `
 
+function normalizeImage(image, imageAlt = '') {
+  if (typeof image === 'string') return { url: image, publicId: null, altText: imageAlt }
+  return { url: image.url, publicId: image.publicId || null, altText: image.altText || imageAlt }
+}
+
 async function replaceImages(client, productId, images, imageAlt) {
+  const existing = await client.query('SELECT public_id FROM product_images WHERE product_id = $1 AND public_id IS NOT NULL', [productId])
+  const normalizedImages = images.map((image) => normalizeImage(image, imageAlt))
+  const incomingPublicIds = new Set(normalizedImages.map((image) => image.publicId).filter(Boolean))
+  const removedPublicIds = existing.rows.map((row) => row.public_id).filter((publicId) => !incomingPublicIds.has(publicId))
+
   await client.query('DELETE FROM product_images WHERE product_id = $1', [productId])
-  for (const [position, url] of images.entries()) {
-    await client.query('INSERT INTO product_images (product_id, url, alt_text, position) VALUES ($1, $2, $3, $4)', [productId, url, imageAlt || '', position])
+  for (const [position, image] of normalizedImages.entries()) {
+    await client.query(
+      'INSERT INTO product_images (product_id, url, public_id, alt_text, position) VALUES ($1, $2, $3, $4, $5)',
+      [productId, image.url, image.publicId, image.altText, position],
+    )
   }
+
+  return { normalizedImages, removedPublicIds }
+}
+
+async function destroyRemovedImages(publicIds) {
+  const results = await Promise.allSettled(publicIds.map((publicId) => cloudinary.uploader.destroy(publicId, { invalidate: true })))
+  results.forEach((result, index) => {
+    if (result.status === 'rejected') console.error(`Unable to delete Cloudinary image ${publicIds[index]}`, result.reason)
+  })
 }
 
 function sendWriteError(error, res) {
   if (error.code === '23505') {
+    if (error.constraint?.includes('public_id')) {
+      res.status(409).json({ error: 'One of these images is already assigned to a product' })
+      return true
+    }
     const field = error.constraint?.includes('sku') ? 'SKU' : 'slug'
     res.status(409).json({ error: `A product with this ${field} already exists` })
     return true
@@ -68,6 +113,11 @@ router.get('/admin/list', requireAuth, async (req, res) => {
   }
   const result = await query(`SELECT ${productColumns} FROM products p LEFT JOIN categories c ON c.id = p.category_id ${conditions.length ? `WHERE ${conditions.join(' AND ')}` : ''} ORDER BY p.updated_at DESC LIMIT 200`, values)
   res.json({ products: result.rows })
+})
+
+router.get('/admin/categories', requireAuth, async (req, res) => {
+  const result = await query("SELECT id, name, slug FROM categories WHERE status = 'published' ORDER BY name ASC")
+  res.json({ categories: result.rows })
 })
 
 router.get('/admin/:id', requireAuth, async (req, res) => {
@@ -109,10 +159,13 @@ router.post('/', requireAuth, async (req, res) => {
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
-    const result = await client.query(`INSERT INTO products (name, sku, slug, category_id, description, material, finish, dimensions, moq, applications, image_alt, seo_title, seo_description, seo_keywords, featured, status) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *`, [p.name, p.sku, p.slug, p.categoryId || null, p.description, p.material, p.finish, p.dimensions, p.moq, JSON.stringify(p.applications), p.imageAlt, p.seoTitle, p.seoDescription, p.seoKeywords, p.featured, p.status])
-    await replaceImages(client, result.rows[0].id, p.images, p.imageAlt)
+    const result = await client.query(
+      'INSERT INTO products (name, sku, slug, category_id, description, material, finish, dimensions, moq, applications, image_alt, seo_title, seo_description, seo_keywords, featured, status) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *',
+      [p.name, p.sku, p.slug, p.categoryId || null, p.description, p.material, p.finish, p.dimensions, p.moq, JSON.stringify(p.applications), p.imageAlt, p.seoTitle, p.seoDescription, p.seoKeywords, p.featured, p.status],
+    )
+    const { normalizedImages } = await replaceImages(client, result.rows[0].id, p.images, p.imageAlt)
     await client.query('COMMIT')
-    res.status(201).json({ product: { ...result.rows[0], images: p.images } })
+    res.status(201).json({ product: { ...result.rows[0], images: normalizedImages } })
   } catch (error) {
     await client.query('ROLLBACK')
     if (!sendWriteError(error, res)) throw error
@@ -129,6 +182,9 @@ router.patch('/:id', requireAuth, async (req, res) => {
   const columnMap = { name: 'name', sku: 'sku', slug: 'slug', categoryId: 'category_id', description: 'description', material: 'material', finish: 'finish', dimensions: 'dimensions', moq: 'moq', applications: 'applications', imageAlt: 'image_alt', seoTitle: 'seo_title', seoDescription: 'seo_description', seoKeywords: 'seo_keywords', featured: 'featured', status: 'status' }
   const entries = Object.entries(changes)
   const client = await pool.connect()
+  let removedPublicIds = []
+  let responseImages
+
   try {
     await client.query('BEGIN')
     let product
@@ -142,13 +198,21 @@ router.patch('/:id', requireAuth, async (req, res) => {
       const result = await client.query('SELECT * FROM products WHERE id = $1', [req.params.id])
       product = result.rows[0]
     }
+
     if (!product) {
       await client.query('ROLLBACK')
       return res.status(404).json({ error: 'Product not found' })
     }
-    if (images !== undefined) await replaceImages(client, product.id, images, changes.imageAlt ?? product.image_alt)
+
+    if (images !== undefined) {
+      const replacement = await replaceImages(client, product.id, images, changes.imageAlt ?? product.image_alt)
+      removedPublicIds = replacement.removedPublicIds
+      responseImages = replacement.normalizedImages
+    }
+
     await client.query('COMMIT')
-    res.json({ product: { ...product, ...(images !== undefined ? { images } : {}) } })
+    if (removedPublicIds.length) await destroyRemovedImages(removedPublicIds)
+    res.json({ product: { ...product, ...(responseImages ? { images: responseImages } : {}) } })
   } catch (error) {
     await client.query('ROLLBACK')
     if (!sendWriteError(error, res)) throw error
