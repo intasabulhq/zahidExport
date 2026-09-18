@@ -18,6 +18,7 @@ function AdminProductForm() {
   const navigate = useNavigate()
   const editing = Boolean(id)
   const [form, setForm] = useState(emptyForm)
+  const [categories, setCategories] = useState([])
   const [slugEdited, setSlugEdited] = useState(false)
   const [loading, setLoading] = useState(editing)
   const [saving, setSaving] = useState(false)
@@ -25,6 +26,14 @@ function AdminProductForm() {
   const [uploadProgress, setUploadProgress] = useState(0)
   const [deletingImage, setDeletingImage] = useState('')
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    let active = true
+    apiRequest('/api/products/admin/categories')
+      .then(({ categories: loadedCategories }) => active && setCategories(loadedCategories || []))
+      .catch((requestError) => active && setError(requestError.message))
+    return () => { active = false }
+  }, [])
 
   useEffect(() => {
     if (!editing) return
@@ -171,6 +180,7 @@ function AdminProductForm() {
           <label><span>Finish</span><input maxLength="200" value={form.finish} onChange={(event) => setField('finish', event.target.value)} /></label>
           <label><span>Dimensions</span><input maxLength="200" value={form.dimensions} onChange={(event) => setField('dimensions', event.target.value)} /></label>
           <label><span>MOQ</span><input maxLength="100" value={form.moq} onChange={(event) => setField('moq', event.target.value)} /></label>
+          <label><span>Category</span><select value={form.categoryId || ''} onChange={(event) => setField('categoryId', event.target.value || null)}><option value="">Uncategorized</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
           <label className="admin-field-wide"><span>Applications (comma separated)</span><input value={form.applications} onChange={(event) => setField('applications', event.target.value)} placeholder="Hospitality, Retail, Interior Projects" /></label>
         </div></fieldset>
 

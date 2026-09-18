@@ -115,6 +115,11 @@ router.get('/admin/list', requireAuth, async (req, res) => {
   res.json({ products: result.rows })
 })
 
+router.get('/admin/categories', requireAuth, async (req, res) => {
+  const result = await query("SELECT id, name, slug FROM categories WHERE status = 'published' ORDER BY name ASC")
+  res.json({ categories: result.rows })
+})
+
 router.get('/admin/:id', requireAuth, async (req, res) => {
   const result = await query(`SELECT ${productColumns} FROM products p LEFT JOIN categories c ON c.id = p.category_id WHERE p.id = $1`, [req.params.id])
   if (!result.rows[0]) return res.status(404).json({ error: 'Product not found' })
