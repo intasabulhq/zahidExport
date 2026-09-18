@@ -19,7 +19,7 @@ const productSchema = z.object({
   name: z.string().trim().min(2).max(180),
   sku: z.string().trim().min(2).max(100),
   slug: z.string().trim().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-  categoryId: z.string().uuid().nullable().optional(),
+  categoryId: z.string().uuid('Select a valid category for this product'),
   description: z.string().trim().min(20),
   material: z.string().trim().max(200).default(''),
   finish: z.string().trim().max(200).default(''),
@@ -161,7 +161,7 @@ router.post('/', requireAuth, async (req, res) => {
     await client.query('BEGIN')
     const result = await client.query(
       'INSERT INTO products (name, sku, slug, category_id, description, material, finish, dimensions, moq, applications, image_alt, seo_title, seo_description, seo_keywords, featured, status) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *',
-      [p.name, p.sku, p.slug, p.categoryId || null, p.description, p.material, p.finish, p.dimensions, p.moq, JSON.stringify(p.applications), p.imageAlt, p.seoTitle, p.seoDescription, p.seoKeywords, p.featured, p.status],
+      [p.name, p.sku, p.slug, p.categoryId, p.description, p.material, p.finish, p.dimensions, p.moq, JSON.stringify(p.applications), p.imageAlt, p.seoTitle, p.seoDescription, p.seoKeywords, p.featured, p.status],
     )
     const { normalizedImages } = await replaceImages(client, result.rows[0].id, p.images, p.imageAlt)
     await client.query('COMMIT')

@@ -5,7 +5,7 @@ import './admin.css'
 import './admin-products.css'
 import './admin-image-upload.css'
 
-const emptyForm = { name: '', sku: '', slug: '', description: '', material: '', finish: '', dimensions: '', moq: '', applications: '', images: [], imageAlt: '', seoTitle: '', seoDescription: '', seoKeywords: '', featured: false, status: 'draft', categoryId: null }
+const emptyForm = { name: '', sku: '', slug: '', description: '', material: '', finish: '', dimensions: '', moq: '', applications: '', images: [], imageAlt: '', seoTitle: '', seoDescription: '', seoKeywords: '', featured: false, status: 'draft', categoryId: '' }
 const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/tiff', 'image/bmp', 'image/x-ms-bmp'])
 const makeSlug = (value) => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const splitList = (value) => value.split(',').map((item) => item.trim()).filter(Boolean)
@@ -47,7 +47,7 @@ function AdminProductForm() {
         images: (product.images || []).map(normalizeImage), imageAlt: product.image_alt || '',
         seoTitle: product.seo_title || '', seoDescription: product.seo_description || '',
         seoKeywords: (product.seo_keywords || []).join(', '), featured: Boolean(product.featured),
-        status: product.status || 'draft', categoryId: product.category_id || null,
+        status: product.status || 'draft', categoryId: product.category_id || '',
       })
       setSlugEdited(true)
     }).catch((requestError) => active && setError(requestError.message)).finally(() => active && setLoading(false))
@@ -133,6 +133,7 @@ function AdminProductForm() {
   const handleSubmit = async (event) => {
     event.preventDefault()
     if (uploading) return
+    if (!form.categoryId) return setError('Select a category before saving this product')
     setSaving(true)
     setError('')
     const images = form.images.map((image, position) => ({
@@ -147,7 +148,7 @@ function AdminProductForm() {
       imageAlt: images[0]?.altText || form.imageAlt,
       applications: splitList(form.applications),
       seoKeywords: splitList(form.seoKeywords),
-      categoryId: form.categoryId || null,
+      categoryId: form.categoryId,
     }
     delete payload.persisted
     try {
@@ -180,7 +181,7 @@ function AdminProductForm() {
           <label><span>Finish</span><input maxLength="200" value={form.finish} onChange={(event) => setField('finish', event.target.value)} /></label>
           <label><span>Dimensions</span><input maxLength="200" value={form.dimensions} onChange={(event) => setField('dimensions', event.target.value)} /></label>
           <label><span>MOQ</span><input maxLength="100" value={form.moq} onChange={(event) => setField('moq', event.target.value)} /></label>
-          <label><span>Category</span><select value={form.categoryId || ''} onChange={(event) => setField('categoryId', event.target.value || null)}><option value="">Uncategorized</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
+          <label><span>Category *</span><select required value={form.categoryId} onChange={(event) => setField('categoryId', event.target.value)}><option value="">Select a category</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
           <label className="admin-field-wide"><span>Applications (comma separated)</span><input value={form.applications} onChange={(event) => setField('applications', event.target.value)} placeholder="Hospitality, Retail, Interior Projects" /></label>
         </div></fieldset>
 

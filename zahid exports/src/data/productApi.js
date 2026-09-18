@@ -11,7 +11,7 @@ export function mapApiProduct(product) {
     sku: product.sku,
     slug: product.slug,
     name: product.name,
-    category: product.category || 'Uncategorized',
+    category: product.category || '',
     categorySlug: product.category_slug || '',
     description: product.description,
     material: product.material,
