@@ -23,6 +23,22 @@ function hasValidImageSignature(file) {
     return buffer.length >= 12 && buffer.subarray(0, 4).toString() === 'RIFF' && buffer.subarray(8, 12).toString() === 'WEBP'
   }
 
+  if (file.mimetype === 'image/gif') {
+    const signature87a = Buffer.from('GIF87a')
+    const signature89a = Buffer.from('GIF89a')
+    return buffer.length >= 6 && (buffer.subarray(0, 6).equals(signature87a) || buffer.subarray(0, 6).equals(signature89a))
+  }
+
+  if (file.mimetype === 'image/tiff') {
+    const littleEndian = Buffer.from([0x49, 0x49, 0x2a, 0x00])
+    const bigEndian = Buffer.from([0x4d, 0x4d, 0x00, 0x2a])
+    return buffer.length >= 4 && (buffer.subarray(0, 4).equals(littleEndian) || buffer.subarray(0, 4).equals(bigEndian))
+  }
+
+  if (file.mimetype === 'image/bmp' || file.mimetype === 'image/x-ms-bmp') {
+    return buffer.length >= 2 && buffer.subarray(0, 2).toString() === 'BM'
+  }
+
   return false
 }
 
@@ -51,7 +67,7 @@ router.post('/images', requireAuth, uploadProductImages, async (req, res) => {
 
   const invalidFile = files.find((file) => !hasValidImageSignature(file))
   if (invalidFile) {
-    return res.status(400).json({ error: `${invalidFile.originalname} is not a valid JPG, PNG or WebP image` })
+    return res.status(400).json({ error: `${invalidFile.originalname} is not a valid JPG, PNG, WebP, GIF, TIFF or BMP image` })
   }
 
   const uploadedImages = []

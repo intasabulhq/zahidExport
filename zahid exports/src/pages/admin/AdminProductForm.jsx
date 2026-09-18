@@ -6,7 +6,7 @@ import './admin-products.css'
 import './admin-image-upload.css'
 
 const emptyForm = { name: '', sku: '', slug: '', description: '', material: '', finish: '', dimensions: '', moq: '', applications: '', images: [], imageAlt: '', seoTitle: '', seoDescription: '', seoKeywords: '', featured: false, status: 'draft', categoryId: null }
-const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp'])
+const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/tiff', 'image/bmp', 'image/x-ms-bmp'])
 const makeSlug = (value) => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const splitList = (value) => value.split(',').map((item) => item.trim()).filter(Boolean)
 const normalizeImage = (image, index) => typeof image === 'string'
@@ -66,7 +66,7 @@ function AdminProductForm() {
     if (!files.length) return
     if (form.images.length + files.length > 12) return setError('Maximum 12 images are allowed per product')
     const invalid = files.find((file) => !allowedTypes.has(file.type) || file.size > 5 * 1024 * 1024)
-    if (invalid) return setError(`${invalid.name} must be JPG, PNG or WebP and 5 MB or smaller`)
+    if (invalid) return setError(`${invalid.name} must be JPG, PNG, WebP, GIF, TIFF or BMP and 5 MB or smaller`)
 
     setUploading(true)
     setUploadProgress(0)
@@ -186,8 +186,8 @@ function AdminProductForm() {
 
         <fieldset><legend>Product images</legend>
           <div className="admin-image-toolbar">
-            <label className="admin-image-picker"><input type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple disabled={uploading || form.images.length >= 12} onChange={chooseImages} /><span>{uploading ? `Uploading ${uploadProgress}%` : 'Choose images'}</span></label>
-            <p>JPG, PNG or WebP · 5 MB each · {form.images.length}/12 images</p>
+            <label className="admin-image-picker"><input type="file" accept=".jpg,.jpeg,.png,.webp,.gif,.tif,.tiff,.bmp,image/jpeg,image/png,image/webp,image/gif,image/tiff,image/bmp,image/x-ms-bmp" multiple disabled={uploading || form.images.length >= 12} onChange={chooseImages} /><span>{uploading ? `Uploading ${uploadProgress}%` : 'Choose images'}</span></label>
+            <p>JPG, PNG, WebP, GIF, TIFF or BMP · 5 MB each · {form.images.length}/12 images</p>
           </div>
           {uploading && <div className="admin-upload-progress" role="progressbar" aria-valuenow={uploadProgress} aria-valuemin="0" aria-valuemax="100"><span style={{ width: `${uploadProgress}%` }} /></div>}
           {form.images.length ? <div className="admin-image-grid">{form.images.map((image, index) => {
