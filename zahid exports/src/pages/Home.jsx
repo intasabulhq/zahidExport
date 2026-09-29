@@ -1,34 +1,19 @@
 import { Link } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import HeroSlider from '../components/HeroSlider'
 import ProductGrid from '../components/ProductGrid'
-import { products } from '../data/products'
-import { categories } from '../data/categories'
+import { useCatalog } from '../data/useCatalog'
 
 function Home() {
+  const { products, categories } = useCatalog()
   const featured = products.filter((product) => product.featured)
 
   return (
     <div className="page-shell">
       <Header />
       <main>
-        <section className="hero">
-          <img
-            className="hero-image"
-            src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2200&q=90"
-            alt="Luxury furniture and interior"
-          />
-          <div className="hero-overlay" />
-          <div className="container hero-content">
-            <p className="eyebrow">Furniture · Home Décor · Handcrafted</p>
-            <h1 className="hero-title">Crafted for<br />Beautiful Spaces.</h1>
-            <p className="hero-copy">A considered collection of premium furniture, home décor and handcrafted pieces for retailers, hospitality groups and global B2B buyers.</p>
-            <div className="hero-buttons">
-              <Link className="btn btn-light" to="/products">Explore Collection ↗</Link>
-              <Link className="btn btn-outline-light" to="/contact">Request a Quote</Link>
-            </div>
-          </div>
-        </section>
+        <HeroSlider />
 
         <section className="section intro-section">
           <div className="container intro">

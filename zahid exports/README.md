@@ -1,16 +1,30 @@
-# React + Vite
+# Zahid Exports
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A B2B product catalogue and quote-request website built with React, Vite, React Router and Tailwind CSS. Buyers can browse the public catalogue and submit quote requests without creating an account. Staff use the separate `/admin` area to manage products, categories and enquiries.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+cd "zahid exports"
+npm ci
+npm run dev
+```
 
-## React Compiler
+The public website runs using sample data until Supabase is configured. The staff dashboard and quote submission require Supabase.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Supabase setup
 
-## Expanding the ESLint configuration
+1. Create a Supabase project.
+2. Copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` from the project API settings. The browser must only receive the public anon/publishable key—never a service-role key.
+3. Run [`supabase/migrations/202609290001_b2b_catalog_and_enquiries.sql`](supabase/migrations/202609290001_b2b_catalog_and_enquiries.sql) in the Supabase SQL Editor. It creates the catalogue, enquiries, product-image bucket and row-level security policies, and seeds the current sample categories/products.
+4. In Supabase Auth settings, disable public sign-ups. Create staff users from the Supabase dashboard, then grant dashboard access only to approved staff by running the commented `admin_users` insert at the end of the migration with that staff user's email.
+5. Start or restart Vite after updating `.env.local`. Staff sign in at `/admin`; buyers do not sign in and can send quote requests from `/contact` or a product detail page.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The admin dashboard verifies staff membership in the database. Product, category, image and enquiry access is also guarded by Supabase row-level security. The public key is safe to use in the browser only with these policies enabled.
+
+## Available scripts
+
+- `npm run dev` — start the local Vite server
+- `npm run build` — build the production site
+- `npm run preview` — preview the production build
+- `npm run lint` — run ESLint
