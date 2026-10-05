@@ -3,30 +3,33 @@
 @import "./pages/home-polish.css";
 @import "./pages/hero-slider.css";
 
-:root {
-  font-family: 'Poppins', Arial, Helvetica, sans-serif;
-  color: #25231f;
-  background: #f4f1eb;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  --ink: #25231f;
-  --muted: #746f66;
-  --paper: #f4f1eb;
-  --warm: #e7e0d6;
-  --dark: #1f211e;
-  --line: rgba(37, 35, 31, .16);
+/* Base resets must not override Tailwind's layered colour/font utilities. */
+@layer base {
+  :root {
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    color: #25231f;
+    background: #f4f1eb;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    --ink: #25231f;
+    --muted: #746f66;
+    --paper: #f4f1eb;
+    --warm: #e7e0d6;
+    --dark: #1f211e;
+    --line: rgba(37, 35, 31, .16);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; min-width: 320px; background: var(--paper); }
+  body, button, a { font: inherit; }
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+  button { border-radius: 0; }
+  #root { min-height: 100vh; width: 100%; }
+  h1, h2, h3, p { margin-top: 0; }
+  h1, h2, h3 { font-family: 'Poppins', Arial, Helvetica, sans-serif; font-weight: 500; color: inherit; }
 }
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; min-width: 320px; background: var(--paper); }
-body, button, a { font: inherit; }
-a { color: inherit; }
-img { max-width: 100%; display: block; }
-button { border-radius: 0; }
-#root { min-height: 100vh; width: 100%; }
-h1, h2, h3, p { margin-top: 0; }
-h1, h2, h3 { font-family: 'Poppins', Arial, Helvetica, sans-serif; font-weight: 500; color: inherit; }
 .page-shell { min-height: 100vh; overflow-x: clip; }
 .container { width: min(1180px, calc(100% - 64px)); margin-inline: auto; }
 .section { padding: 120px 0; }

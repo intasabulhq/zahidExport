@@ -3,11 +3,12 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Reveal from '../components/Reveal'
 import Seo from '../components/Seo'
-import { products } from '../data/products'
-import { categories } from '../data/categories'
+import useAsyncResource from '../hooks/useAsyncResource'
+import { fetchHome, imageUrl } from '../data/productApi'
 import './home-motion.css'
 import './home-theme.css'
 import './home-v2.css'
+import './catalogue.css'
 
 const stages = [
   { number: '01', title: 'Discover', label: 'Direction & sourcing', copy: 'We align product references, quantities, target prices, compliance needs and market direction before development begins.', points: ['Requirement review', 'Category mapping', 'Commercial direction'] },
@@ -22,14 +23,12 @@ const services = [
   { index: '04', title: 'Export coordination', copy: 'Clear communication for production updates, packaging requirements and global supply.' },
 ]
 
+const loadHome = (key, signal) => fetchHome(signal)
+
 function Home() {
-  const visualProducts = products.filter((product) => product.images?.length)
-  const featured = visualProducts.filter((product) => product.featured).slice(0, 4)
-  const heroProducts = visualProducts.slice(0, 3)
-  const categoryCards = categories.slice(0, 8).map((category) => ({
-    ...category,
-    image: visualProducts.find((product) => product.categorySlug === category.slug)?.images?.[0],
-  }))
+  const { data, loading, error, retry } = useAsyncResource('home', loadHome)
+  const featured = data?.products || []
+  const categoryCards = data?.categories || []
 
   const organizationSchema = {
     '@context': 'https://schema.org',
@@ -48,7 +47,7 @@ function Home() {
       description="Zahid Exports manufactures handcrafted metal furniture, home decor and lifestyle products in Moradabad for wholesale, hospitality and global buyers."
       keywords={['home decor manufacturer India', 'Moradabad handicraft exporter', 'metal furniture manufacturer', 'wholesale decor supplier India']}
       canonicalPath="/"
-      image={heroProducts[0]?.images?.[0]}
+      image={imageUrl(featured[0]?.images?.[0])}
       structuredData={organizationSchema}
     />
     <Header />
@@ -70,20 +69,6 @@ function Home() {
                 <Link className="ze2-btn ze2-btn-ghost" to="/contact">Discuss a project <span>↗</span></Link>
               </div>
             </div>
-          </div>
-
-          <div className="ze2-hero-gallery" aria-label="Selected Zahid Exports products">
-            {heroProducts[0] && <Link to={`/products/${heroProducts[0].slug}`} className="ze2-main-product">
-              <img src={heroProducts[0].images[0]} alt={heroProducts[0].imageAlt} />
-              <span><small>Selected object · {heroProducts[0].id}</small>{heroProducts[0].name}</span>
-            </Link>}
-            <div className="ze2-side-products">
-              {heroProducts.slice(1).map((product, index) => <Link key={product.id} to={`/products/${product.slug}`} className={`ze2-side-product ze2-side-product-${index + 1}`}>
-                <img src={product.images[0]} alt={product.imageAlt} />
-                <span>{product.id}</span>
-              </Link>)}
-            </div>
-            <div className="ze2-sourcing-card"><small>For global buyers</small><strong>Furniture.<br />Décor.<br />Objects.</strong><span>Direct B2B enquiry ↗</span></div>
           </div>
         </div>
         <a className="ze2-scroll" href="#partner">Scroll to explore <span>↓</span></a>
@@ -126,12 +111,19 @@ function Home() {
 
       <section className="ze2-categories ze2-section">
         <div className="container ze2-category-head"><Reveal><p className="ze2-kicker">Product universe</p><h2>Explore the collection.</h2></Reveal><Reveal delay={100}><p>Furniture, tabletop and decorative objects developed across a growing multi-category catalogue.</p><Link className="ze2-text-link" to="/products">View all products <span>↗</span></Link></Reveal></div>
-        <div className="ze2-category-rail">{categoryCards.map((category, index) => <Reveal as="article" key={category.id} className="ze2-category" delay={(index % 4) * 70}><Link to={`/products/category/${category.slug}`}><div>{category.image ? <img src={category.image} alt={`${category.name} manufactured by Zahid Exports`} loading="lazy" /> : <span>ZE</span>}<b>{String(index + 1).padStart(2, '0')}</b></div><h3>{category.name}</h3><small>{category.productCount} legacy pieces</small><i>↗</i></Link></Reveal>)}</div>
+        <div className="container">
+          {loading && <p className="home-catalogue-status" role="status">Loading collections…</p>}
+          {error && <div className="catalogue-error" role="alert"><p>Unable to load the collection. {error.message}</p><button type="button" className="btn catalogue-retry" onClick={retry}>Try again</button></div>}
+          {!loading && !error && !categoryCards.length && <p className="home-catalogue-status">New collections are being prepared. <Link to="/contact">Discuss your requirements.</Link></p>}
+        </div>
+        <div className="ze2-category-rail">{categoryCards.map((category, index) => <Reveal as="article" key={category.id} className="ze2-category" delay={(index % 4) * 70}><Link to={`/products/category/${category.slug}`}><div>{category.image ? <img src={category.image} alt={`${category.name} manufactured by Zahid Exports`} loading="lazy" /> : <span>ZE</span>}<b>{String(index + 1).padStart(2, '0')}</b></div><h3>{category.name}</h3><small>{category.productCount} published {category.productCount === 1 ? 'product' : 'products'}</small><i>↗</i></Link></Reveal>)}</div>
       </section>
 
       <section className="ze2-featured ze2-section">
         <div className="container"><Reveal><p className="ze2-kicker">Selected pieces</p><h2>Designed to be noticed.</h2></Reveal>
-          <div className="ze2-featured-grid">{featured.map((product, index) => <Reveal as="article" key={product.id} className={`ze2-featured-card ze2-featured-${index + 1}`} delay={index * 90}><Link to={`/products/${product.slug}`}><div><img src={product.images[0]} alt={product.imageAlt} loading="lazy" /></div><p>{product.category}</p><h3>{product.name}</h3><span>{product.id}</span></Link></Reveal>)}</div>
+          {loading && <p className="home-catalogue-status" role="status">Loading selected products…</p>}
+          {!loading && !error && !featured.length && <p className="home-catalogue-status">Selected products are being prepared. <Link to="/products">Explore the full catalogue.</Link></p>}
+          <div className="ze2-featured-grid">{featured.map((product, index) => <Reveal as="article" key={product.dbId} className={`ze2-featured-card ze2-featured-${index + 1}`} delay={index * 90}><Link to={`/products/${product.slug}`}><div>{imageUrl(product.images[0]) ? <img src={imageUrl(product.images[0])} alt={product.images[0]?.altText || product.imageAlt} loading="lazy" /> : <div className="product-placeholder"><small>Product image coming soon</small></div>}</div><p>{product.category}</p><h3>{product.name}</h3><span>{product.id}</span></Link></Reveal>)}</div>
         </div>
       </section>
 
