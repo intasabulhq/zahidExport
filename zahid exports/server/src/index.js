@@ -8,6 +8,7 @@ import { query } from './config/db.js'
 import authRoutes from './routes/auth.js'
 import productRoutes from './routes/products.js'
 import enquiryRoutes from './routes/enquiries.js'
+import uploadRoutes from './routes/uploads.js'
 import { errorHandler, notFound } from './middleware/errorHandler.js'
 
 const app = express()
@@ -24,6 +25,7 @@ app.get('/api/health', async (req, res) => {
 })
 app.use('/api/auth', authRoutes)
 app.use('/api/products', productRoutes)
+app.use('/api/uploads', uploadRoutes)
 app.use('/api/enquiries', enquiryRoutes)
 app.use(notFound)
 app.use(errorHandler)
