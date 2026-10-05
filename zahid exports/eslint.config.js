@@ -8,7 +8,7 @@ export default defineConfig([
   globalIgnores(['dist', 'server/node_modules']),
   {
     files: ['**/*.{js,jsx}'],
-    ignores: ['server/**/*.js'],
+    ignores: ['server/**/*.js', 'test/**/*.js'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
@@ -20,7 +20,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['server/**/*.js'],
+    files: ['server/**/*.js', 'test/**/*.js'],
     extends: [js.configs.recommended],
     languageOptions: {
       globals: globals.node,

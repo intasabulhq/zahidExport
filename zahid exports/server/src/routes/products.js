@@ -1,39 +1,11 @@
 import { Router } from 'express'
-import { z } from 'zod'
 import { cloudinary } from '../config/cloudinary.js'
 import { pool, query } from '../config/db.js'
 import { requireAuth } from '../middleware/auth.js'
+import { productCreateSchema, productPatchSchema, productIdSchema, productStatusValues } from '../validation/products.js'
 
 const router = Router()
-const statusValues = ['draft', 'published', 'archived']
-const productFolderPrefix = 'zahid-exports/products/'
-
-const productImageSchema = z.object({
-  url: z.string().url().max(2000),
-  publicId: z.string().trim().startsWith(productFolderPrefix).max(500).nullable().optional().default(null),
-  altText: z.string().trim().max(240).default(''),
-  position: z.number().int().min(0).max(11).optional(),
-})
-
-const productSchema = z.object({
-  name: z.string().trim().min(2).max(180),
-  sku: z.string().trim().min(2).max(100),
-  slug: z.string().trim().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-  categoryId: z.string().uuid('Select a valid category for this product'),
-  description: z.string().trim().min(20),
-  material: z.string().trim().max(200).default(''),
-  finish: z.string().trim().max(200).default(''),
-  dimensions: z.string().trim().max(200).default(''),
-  moq: z.string().trim().max(100).default(''),
-  applications: z.array(z.string().trim().min(1).max(100)).default([]),
-  images: z.array(z.union([z.string().url().max(2000), productImageSchema])).max(12).default([]),
-  imageAlt: z.string().trim().max(240).default(''),
-  seoTitle: z.string().trim().max(70),
-  seoDescription: z.string().trim().max(170),
-  seoKeywords: z.array(z.string().trim().min(1).max(100)).default([]),
-  featured: z.boolean().default(false),
-  status: z.enum(statusValues).default('draft'),
-})
+const statusValues = productStatusValues
 
 const productColumns = `
   p.id, p.category_id, p.name, p.sku, p.slug, p.description, p.material, p.finish,
@@ -121,6 +93,7 @@ router.get('/admin/categories', requireAuth, async (req, res) => {
 })
 
 router.get('/admin/:id', requireAuth, async (req, res) => {
+  if (!productIdSchema.safeParse(req.params.id).success) return res.status(400).json({ error: 'Invalid product ID' })
   const result = await query(`SELECT ${productColumns} FROM products p LEFT JOIN categories c ON c.id = p.category_id WHERE p.id = $1`, [req.params.id])
   if (!result.rows[0]) return res.status(404).json({ error: 'Product not found' })
   res.json({ product: result.rows[0] })
@@ -129,20 +102,23 @@ router.get('/admin/:id', requireAuth, async (req, res) => {
 router.get('/', async (req, res) => {
   const search = String(req.query.search || '').trim()
   const category = String(req.query.category || '').trim()
-  const limit = Math.min(Math.max(Number(req.query.limit) || 24, 1), 100)
-  const offset = Math.max(Number(req.query.offset) || 0, 0)
+  const limit = req.query.limit === undefined ? 24 : Number(req.query.limit)
+  const offset = req.query.offset === undefined ? 0 : Number(req.query.offset)
+  if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100 || !Number.isSafeInteger(offset) || offset < 0) {
+    return res.status(400).json({ error: 'limit must be an integer from 1 to 100 and offset must be a non-negative integer' })
+  }
   const values = []
   const conditions = ["p.status = 'published'"]
   if (search) {
     values.push(`%${search}%`)
-    conditions.push(`(p.name ILIKE $${values.length} OR p.sku ILIKE $${values.length} OR p.description ILIKE $${values.length})`)
+    conditions.push(`(p.name ILIKE $${values.length} OR p.sku ILIKE $${values.length} OR p.description ILIKE $${values.length} OR c.name ILIKE $${values.length})`)
   }
   if (category) {
     values.push(category)
     conditions.push(`c.slug = $${values.length}`)
   }
   values.push(limit, offset)
-  const result = await query(`SELECT ${productColumns} FROM products p LEFT JOIN categories c ON c.id = p.category_id WHERE ${conditions.join(' AND ')} ORDER BY p.featured DESC, p.created_at DESC LIMIT $${values.length - 1} OFFSET $${values.length}`, values)
+  const result = await query(`SELECT ${productColumns} FROM products p LEFT JOIN categories c ON c.id = p.category_id WHERE ${conditions.join(' AND ')} ORDER BY p.featured DESC, p.created_at DESC, p.id DESC LIMIT $${values.length - 1} OFFSET $${values.length}`, values)
   res.json({ products: result.rows, limit, offset })
 })
 
@@ -153,7 +129,7 @@ router.get('/:slug', async (req, res) => {
 })
 
 router.post('/', requireAuth, async (req, res) => {
-  const parsed = productSchema.safeParse(req.body)
+  const parsed = productCreateSchema.safeParse(req.body)
   if (!parsed.success) return res.status(400).json({ error: 'Invalid product data', fields: parsed.error.flatten().fieldErrors })
   const p = parsed.data
   const client = await pool.connect()
@@ -175,7 +151,8 @@ router.post('/', requireAuth, async (req, res) => {
 })
 
 router.patch('/:id', requireAuth, async (req, res) => {
-  const parsed = productSchema.partial().safeParse(req.body)
+  if (!productIdSchema.safeParse(req.params.id).success) return res.status(400).json({ error: 'Invalid product ID' })
+  const parsed = productPatchSchema.safeParse(req.body)
   if (!parsed.success) return res.status(400).json({ error: 'Invalid product data', fields: parsed.error.flatten().fieldErrors })
   const { images, ...changes } = parsed.data
   if (!Object.keys(changes).length && images === undefined) return res.status(400).json({ error: 'No fields supplied' })
@@ -187,23 +164,34 @@ router.patch('/:id', requireAuth, async (req, res) => {
 
   try {
     await client.query('BEGIN')
-    let product
-    if (entries.length) {
-      const values = entries.map(([key, value]) => key === 'applications' ? JSON.stringify(value) : value)
-      const updates = entries.map(([key], index) => `${columnMap[key]} = $${index + 1}`)
-      values.push(req.params.id)
-      const result = await client.query(`UPDATE products SET ${updates.join(', ')}, updated_at = now() WHERE id = $${values.length} RETURNING *`, values)
-      product = result.rows[0]
-    } else {
-      const result = await client.query('SELECT * FROM products WHERE id = $1', [req.params.id])
-      product = result.rows[0]
-    }
-
+    // Serialize updates to a product and validate publication against the
+    // resulting stored record, not only the fields present in this request.
+    const existing = await client.query('SELECT * FROM products WHERE id = $1 FOR UPDATE', [req.params.id])
+    let product = existing.rows[0]
     if (!product) {
       await client.query('ROLLBACK')
       return res.status(404).json({ error: 'Product not found' })
     }
+    const nextStatus = changes.status ?? product.status
+    const nextCategoryId = changes.categoryId ?? product.category_id
+    if (nextStatus === 'published' || changes.categoryId !== undefined) {
+      const category = nextCategoryId
+        ? await client.query('SELECT id, status FROM categories WHERE id = $1 FOR SHARE', [nextCategoryId])
+        : { rows: [] }
+      if (!category.rows[0] || category.rows[0].status !== 'published') {
+        await client.query('ROLLBACK')
+        return res.status(400).json({ error: 'Select a published category before saving or publishing this product', fields: { categoryId: ['Select a published category'] } })
+      }
+    }
 
+    const values = entries.map(([key, value]) => key === 'applications' ? JSON.stringify(value) : value)
+    const updates = entries.map(([key], index) => `${columnMap[key]} = $${index + 1}`)
+    values.push(req.params.id)
+    const result = await client.query(`UPDATE products SET ${updates.length ? `${updates.join(', ')}, ` : ''}updated_at = now() WHERE id = $${values.length} RETURNING *`, values)
+    product = result.rows[0]
+
+    // Omitted images leave database rows and Cloudinary assets untouched.
+    // An explicitly supplied empty array remains an intentional removal.
     if (images !== undefined) {
       const replacement = await replaceImages(client, product.id, images, changes.imageAlt ?? product.image_alt)
       removedPublicIds = replacement.removedPublicIds
@@ -222,6 +210,7 @@ router.patch('/:id', requireAuth, async (req, res) => {
 })
 
 router.delete('/:id', requireAuth, async (req, res) => {
+  if (!productIdSchema.safeParse(req.params.id).success) return res.status(400).json({ error: 'Invalid product ID' })
   const result = await query("UPDATE products SET status = 'archived', updated_at = now() WHERE id = $1 RETURNING id", [req.params.id])
   if (!result.rows[0]) return res.status(404).json({ error: 'Product not found' })
   res.status(204).end()

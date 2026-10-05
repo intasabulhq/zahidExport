@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
+    "test": "node --experimental-vm-modules --test test/*.test.js",
     "db:migrate": "node src/scripts/migrate.js",
     "admin:create": "node src/scripts/createAdmin.js"
   },
